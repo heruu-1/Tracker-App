@@ -44,6 +44,19 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
+.tracker-form__submit,
+.tracker-form__cancel,
+.tracker-search__submit,
+.tracker-transaction-item__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s, transform 0.1s;
+}
+
 /* =========================================================
    UTILITAS AKSESIBILITAS (SCREEN READER ONLY)
    ========================================================= */
@@ -236,18 +249,14 @@ select:focus-visible {
 .tracker-form__submit {
   background: var(--accent-blue);
   color: #fff;
-  border: none;
+  border: 1px solid var(--accent-blue);
   padding: 0.85rem 1.5rem;
   height: 44px;
   border-radius: 12px;
-  font-family: inherit;
-  font-weight: 600;
   font-size: 0.95rem;
-  cursor: pointer;
-  transition: transform 0.1s, opacity 0.2s;
 }
 
-.tracker-form__submit:hover { opacity: 0.85; }
+.tracker-form__submit:hover { background: #24583F; border-color: #24583F; }
 .tracker-form__submit:active { transform: scale(0.98); }
 
 .tracker-form__cancel {
@@ -258,12 +267,10 @@ select:focus-visible {
   border-radius: 12px;
   background: var(--bg-page);
   color: var(--text-dark);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
 }
 
 .tracker-form__cancel:not([hidden]) { display: block; }
+.tracker-form__cancel:hover { background: #E8F2EC; border-color: #B8CDBD; }
 
 /* =========================================================
    TRACKER SEARCH — FORM PENCARIAN
@@ -289,17 +296,15 @@ select:focus-visible {
 }
 
 .tracker-search__submit {
-  background: var(--bg-page);
-  border: 1px solid var(--border-light);
+  background: var(--accent-blue);
+  color: #fff;
+  border: 1px solid var(--accent-blue);
+  min-height: 44px;
   padding: 0 1.5rem;
   border-radius: 12px;
-  font-family: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.tracker-search__submit:hover { background: #E4E4E7; }
+.tracker-search__submit:hover { background: #24583F; border-color: #24583F; }
 
 /* =========================================================
    TRACKER HISTORY — DAFTAR TRANSAKSI
@@ -405,24 +410,31 @@ select:focus-visible {
 }
 
 .tracker-transaction-item__btn {
-  background: var(--bg-page);
-  border: 1px solid var(--border-light);
-  padding: 0.2rem 0.4rem;
+  background: #F5F8F5;
+  border: 1px solid #C9D8CC;
+  color: #244A35;
+  min-height: 36px;
+  padding: 0.4rem 0.65rem;
   font-size: 0.75rem;
   border-radius: 6px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background-color 0.2s, color 0.2s;
 }
 
 .tracker-transaction-item__btn:hover {
-  background: var(--border-light);
-  color: var(--text-dark);
+  background: var(--accent-light);
+  border-color: #A9C3B0;
+  color: #173D28;
+}
+
+.tracker-transaction-item__btn--danger {
+  background: var(--bg-expense);
+  border-color: #E6B9C2;
+  color: var(--color-expense);
 }
 
 .tracker-transaction-item__btn--danger:hover {
-  background: var(--bg-expense);
-  color: #B4233D;
+  background: #FCE3E7;
+  border-color: #D996A4;
+  color: #8F1D34;
 }
 
 .tracker-empty-state,
@@ -560,6 +572,7 @@ select:focus-visible {
   .tracker-transaction-item__btn {
     flex: 1;
     padding: 0.75rem 0;
+    min-height: 44px;
     font-size: 0.85rem;
     font-weight: 500;
   }
