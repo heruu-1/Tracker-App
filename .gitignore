@@ -1,0 +1,12 @@
+# Submission archive and generated archives stay local.
+*.zip
+
+# Local verification output and planning artifacts are not source files.
+/verification/
+/tasks/
+/starter-original/
+
+# Common local/generated files.
+node_modules/
+.DS_Store
+Thumbs.db
