@@ -1,5 +1,5 @@
 /**
- * Expense Tracker App
+ * Keran — Tracker Keuangan
  * Semua perubahan data melewati localStorage lalu memicu custom event
  * transaction:updated. Satu listener event tersebut memperbarui daftar dan dasbor.
  */

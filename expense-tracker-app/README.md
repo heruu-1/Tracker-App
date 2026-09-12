@@ -1,6 +1,6 @@
-# Expense Tracker App — Starter Project
+# Keran — Tracker Keuangan
 
-Selamat datang di *starter project* submission kelas **Front-End Web Pemula**! 🎉
+Selamat datang di aplikasi **Keran (Tracker Keuangan)** untuk submission kelas **Front-End Web Pemula**! 🎉
 
 Proyek ini sudah dilengkapi dengan tampilan HTML dan CSS yang siap pakai. Tugas Anda adalah melengkapi logika JavaScript-nya di berkas `main.js` agar aplikasi berfungsi sepenuhnya.
 

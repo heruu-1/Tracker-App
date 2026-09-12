@@ -1,5 +1,5 @@
 /* =========================================================
-   Expense Tracker App — style.css
+   Keran — Tracker Keuangan · style.css
    Penamaan class menggunakan konvensi BEM dengan namespace "tracker"
    ========================================================= */
 
@@ -115,9 +115,25 @@ select:focus-visible {
 }
 
 .tracker-header__title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
   font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: -0.03em;
+}
+
+.tracker-header__brand-name {
+  color: var(--text-dark);
+}
+
+.tracker-header__brand-tagline {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 .tracker-header__user {
