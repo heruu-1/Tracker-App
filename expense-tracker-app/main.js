@@ -5,6 +5,7 @@
  */
 
 const STORAGE_KEY = 'expense-tracker-transactions';
+const PROFILE_STORAGE_KEY = 'expense-tracker-profile';
 const UPDATE_EVENT = 'transaction:updated';
 
 let transactions = [];
@@ -29,6 +30,12 @@ const expenseAmount = document.querySelector('.tracker-summary__stat-amount--exp
 const searchStatus = document.getElementById('transactionSearchStatus');
 const incomeCount = document.querySelector('[data-count-for="income"]');
 const expenseCount = document.querySelector('[data-count-for="expense"]');
+const profileSetup = document.getElementById('profileSetup');
+const profileForm = document.getElementById('profileSetupForm');
+const profileNameInput = document.getElementById('profileNameInput');
+const profileUsernameInput = document.getElementById('profileUsernameInput');
+const greetingName = document.querySelector('.tracker-header__greeting strong');
+const profileAvatar = document.querySelector('.tracker-header__avatar');
 let focusAfterUpdate = null;
 
 const cancelEditButton = document.createElement('button');
@@ -89,6 +96,81 @@ function showStorageMessage(message) {
     document.querySelector('.tracker-form-section__card').prepend(status);
   }
   status.textContent = message;
+}
+
+function isValidProfile(profile) {
+  return profile
+    && typeof profile.name === 'string'
+    && profile.name.trim().length > 0
+    && typeof profile.username === 'string'
+    && profile.username.trim().length > 0;
+}
+
+function loadProfile() {
+  try {
+    const stored = window.localStorage.getItem(PROFILE_STORAGE_KEY);
+    if (!stored) return null;
+    const profile = JSON.parse(stored);
+    return isValidProfile(profile)
+      ? { name: profile.name.trim(), username: profile.username.trim() }
+      : null;
+  } catch (error) {
+    showStorageMessage(`Profil tidak dapat dimuat: ${error.message}`);
+    return null;
+  }
+}
+
+function persistProfile(profile) {
+  try {
+    window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+    return true;
+  } catch (error) {
+    showStorageMessage(`Profil tidak tersimpan: ${error.message}`);
+    return false;
+  }
+}
+
+function getInitials(name) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join('') || 'MH';
+}
+
+function applyProfile(profile) {
+  greetingName.textContent = `${profile.name} (${profile.username})`;
+  profileAvatar.textContent = getInitials(profile.name);
+  profileAvatar.setAttribute('aria-label', `Avatar ${profile.name}`);
+}
+
+function openProfileSetup() {
+  profileSetup.hidden = false;
+  profileNameInput.focus();
+}
+
+function handleProfileSubmit(event) {
+  event.preventDefault();
+  const profile = {
+    name: profileNameInput.value.trim(),
+    username: profileUsernameInput.value.trim(),
+  };
+  if (!profile.name) {
+    alert('Nama lengkap wajib diisi.');
+    profileNameInput.focus();
+    return;
+  }
+  if (!profile.username) {
+    alert('Username Dicoding wajib diisi.');
+    profileUsernameInput.focus();
+    return;
+  }
+  if (!persistProfile(profile)) return;
+  applyProfile(profile);
+  profileSetup.hidden = true;
+  setActionStatus('Profil tersimpan di browser ini.');
+  titleInput.focus();
 }
 
 function loadTransactions() {
@@ -379,6 +461,7 @@ searchForm.addEventListener('submit', (event) => {
   event.preventDefault();
   applySearch();
 });
+profileForm.addEventListener('submit', handleProfileSubmit);
 document.addEventListener(UPDATE_EVENT, () => {
   render();
   updateDashboard();
@@ -387,3 +470,10 @@ document.addEventListener(UPDATE_EVENT, () => {
 
 dateInput.value = createLocalDateValue();
 document.dispatchEvent(new CustomEvent(UPDATE_EVENT));
+
+const savedProfile = loadProfile();
+if (savedProfile) {
+  applyProfile(savedProfile);
+} else {
+  openProfileSetup();
+}

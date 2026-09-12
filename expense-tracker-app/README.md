@@ -59,6 +59,7 @@ Proyek ini adalah HTML statis, sehingga tidak memerlukan instalasi apapun.
 
 - Menambah, mengedit, menghapus, dan memindahkan tipe transaksi antara pemasukan dan pengeluaran.
 - Menyimpan transaksi pada `localStorage` dengan key `expense-tracker-transactions`.
+- Meminta nama lengkap dan username saat kunjungan pertama, lalu menyimpannya pada key `expense-tracker-profile` di browser pengguna.
 - Menampilkan saldo, total pemasukan, dan total pengeluaran secara dinamis.
 - Mencari transaksi secara langsung berdasarkan judul.
 - Memperbarui tampilan melalui custom event `transaction:updated`.

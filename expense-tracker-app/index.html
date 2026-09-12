@@ -24,6 +24,26 @@
       </div>
     </header>
 
+    <section id="profileSetup" class="tracker-profile-setup" hidden aria-labelledby="profileSetupHeading">
+      <div class="tracker-profile-setup__backdrop"></div>
+      <div class="tracker-profile-setup__dialog" role="dialog" aria-modal="true" aria-describedby="profileSetupDescription">
+        <p class="tracker-section__eyebrow">Selamat datang</p>
+        <h2 id="profileSetupHeading" class="tracker-profile-setup__heading">Kenalkan diri Anda</h2>
+        <p id="profileSetupDescription" class="tracker-profile-setup__description">Isi nama dan username untuk menyesuaikan sapaan Keran. Data ini hanya disimpan di browser Anda.</p>
+        <form id="profileSetupForm" class="tracker-profile-setup__form" novalidate>
+          <div class="tracker-form__field">
+            <label class="tracker-form__label" for="profileNameInput">Nama lengkap</label>
+            <input class="tracker-form__input" id="profileNameInput" type="text" autocomplete="name" maxlength="80" value="Muhammad Heru" required>
+          </div>
+          <div class="tracker-form__field">
+            <label class="tracker-form__label" for="profileUsernameInput">Username Dicoding</label>
+            <input class="tracker-form__input" id="profileUsernameInput" type="text" autocomplete="username" maxlength="40" value="heruu_mhmd" required>
+          </div>
+          <button class="tracker-form__submit" type="submit">Mulai menggunakan Keran</button>
+        </form>
+      </div>
+    </section>
+
     <main>
       <section class="tracker-summary" aria-labelledby="summary-heading">
         <h2 id="summary-heading" class="visually-hidden">Ringkasan Keuangan</h2>
