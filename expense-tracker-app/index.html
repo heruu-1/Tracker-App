@@ -17,12 +17,10 @@
       </h1>
       <div class="tracker-header__user">
         <div class="tracker-header__user-info">
-          <!-- TODO: Ganti "Siswa Front-End" dengan Nama Lengkap dan Username Dicoding kamu.
-               Contoh: Halo, <strong>Budi (bdi002)</strong> -->
           <span class="tracker-header__greeting">Halo, <strong>Muhammad Heru (heruu_mhmd)</strong></span>
-          <span class="tracker-header__date">Seluruh Transaksi</span>
+          <span class="tracker-header__date">Ringkasan seluruh transaksi</span>
         </div>
-        <div class="tracker-header__avatar" role="img" aria-label="Avatar Pengguna" aria-hidden="true">👤</div>
+        <div class="tracker-header__avatar" role="img" aria-label="Avatar Muhammad Heru" aria-hidden="true">MH</div>
       </div>
     </header>
 
@@ -48,7 +46,11 @@
 
       <section class="tracker-form-section" aria-labelledby="form-heading">
         <div class="tracker-form-section__card">
-          <h2 id="form-heading" class="tracker-form-section__heading">Tambah Pencatatan Baru</h2>
+          <div class="tracker-form-section__intro">
+            <p class="tracker-section__eyebrow">Pencatatan</p>
+            <h2 id="form-heading" class="tracker-form-section__heading">Tambah transaksi</h2>
+            <p class="tracker-form-section__description">Catat uang masuk atau keluar dalam beberapa detik.</p>
+          </div>
 
           <form id="transactionForm" data-testid="transactionForm" class="tracker-form" novalidate>
             <div class="tracker-form__field">
@@ -64,19 +66,28 @@
               <input type="date" id="transactionFormDateInput" data-testid="transactionFormDateInput" class="tracker-form__input">
             </div>
             <div class="tracker-form__field">
-              <label class="tracker-form__label" for="transactionFormTypeSelect">Klasifikasi</label>
+              <label class="tracker-form__label" for="transactionFormTypeSelect">Jenis transaksi</label>
               <select id="transactionFormTypeSelect" data-testid="transactionFormTypeSelect" class="tracker-form__input">
                 <option value="income">Uang Masuk (+)</option>
                 <option value="expense">Uang Keluar (-)</option>
               </select>
             </div>
-            <button type="submit" data-testid="transactionFormSubmitButton" class="tracker-form__submit">Simpan</button>
+            <p class="tracker-form__hint">Nominal minimal Rp1.</p>
+            <button type="submit" data-testid="transactionFormSubmitButton" class="tracker-form__submit">Simpan transaksi</button>
           </form>
         </div>
       </section>
 
       <section class="tracker-history" aria-labelledby="history-heading">
         <h2 id="history-heading" class="visually-hidden">Riwayat Transaksi</h2>
+
+        <div class="tracker-history__intro">
+          <div>
+            <p class="tracker-section__eyebrow">Aktivitas</p>
+            <h2 class="tracker-history__heading">Riwayat transaksi</h2>
+          </div>
+          <p id="transactionSearchStatus" class="tracker-search__status" role="status" aria-live="polite"></p>
+        </div>
 
         <div class="tracker-search">
           <form id="searchTransactionForm" data-testid="searchTransactionForm" class="tracker-search__form" role="search">
@@ -88,7 +99,7 @@
         <div class="tracker-history__grid">
           <div class="tracker-transaction-list">
             <div class="tracker-transaction-list__header">
-              <h3 class="tracker-transaction-list__title">Arus Pemasukan</h3>
+              <h3 class="tracker-transaction-list__title">Pemasukan <span class="tracker-transaction-list__count" data-count-for="income">0</span></h3>
             </div>
             <!-- Jangan ubah atau hapus atribut data-testid pada elemen berikut -->
             <div id="incomeList" data-testid="incomeList" class="tracker-transaction-list__container">
@@ -98,7 +109,7 @@
 
           <div class="tracker-transaction-list">
             <div class="tracker-transaction-list__header">
-              <h3 class="tracker-transaction-list__title">Arus Pengeluaran</h3>
+              <h3 class="tracker-transaction-list__title">Pengeluaran <span class="tracker-transaction-list__count" data-count-for="expense">0</span></h3>
             </div>
             <!-- Jangan ubah atau hapus atribut data-testid pada elemen berikut -->
             <div id="expenseList" data-testid="expenseList" class="tracker-transaction-list__container">
@@ -111,7 +122,8 @@
     </main>
 
     <footer class="tracker-footer">
-      <p>&#169; 2026 Keran · Tracker Keuangan. Disusun sebagai Starter Project Submission Front-End Web.</p>
+      <p><strong>Keran</strong> · Tracker Keuangan</p>
+      <p class="tracker-footer__note">Data transaksi tersimpan di browser ini.</p>
     </footer>
 
   </div>

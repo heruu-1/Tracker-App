@@ -2,15 +2,15 @@
 
 Selamat datang di aplikasi **Keran (Tracker Keuangan)** untuk submission kelas **Front-End Web Pemula**! 🎉
 
-Proyek ini sudah dilengkapi dengan tampilan HTML dan CSS yang siap pakai. Tugas Anda adalah melengkapi logika JavaScript-nya di berkas `main.js` agar aplikasi berfungsi sepenuhnya.
+Keran menyediakan pencatatan pemasukan dan pengeluaran dengan tampilan dashboard responsif. Seluruh data disimpan secara lokal di browser, tanpa backend atau dependency eksternal.
 
 ---
 
 ## Struktur Berkas
 
 ```
-expense-tracker-starter-project/
-├── index.html   ← Struktur halaman (jangan diubah, kecuali bagian greeting)
+expense-tracker-app/
+├── index.html   ← Struktur halaman dan identitas Keran
 ├── style.css    ← Tampilan visual (bebas dimodifikasi untuk portofolio)
 ├── main.js      ← Tempat Anda menulis seluruh logika JavaScript
 └── README.md    ← Panduan ini
@@ -33,7 +33,7 @@ Proyek ini adalah HTML statis, sehingga tidak memerlukan instalasi apapun.
 
 ## Mulai dari Mana?
 
-1. **Buka `index.html`**, temukan komentar `TODO` di bagian atas dan ganti teks `Siswa Front-End` dengan nama lengkap serta username Dicoding Anda.
+1. Sapaan aplikasi sudah menggunakan **Muhammad Heru (heruu_mhmd)**.
 2. **Buka `main.js`** untuk melihat implementasi logika transaksi, penyimpanan lokal, dasbor, dan pencarian.
 3. Jalankan pemeriksaan sintaks dan uji alur aplikasi melalui browser lokal sebelum mengumpulkan.
 
@@ -44,6 +44,8 @@ Proyek ini adalah HTML statis, sehingga tidak memerlukan instalasi apapun.
 - **Atribut `data-testid`** pada elemen-elemen di `index.html` digunakan oleh sistem penilaian untuk memverifikasi struktur aplikasi Anda. Pastikan nilai atribut ini tidak berubah saat Anda membuat elemen kartu transaksi via JavaScript.
 - **Atribut `id`** seperti `incomeList`, `expenseList`, dan `transactionForm` juga digunakan oleh JavaScript. Pastikan nilainya tidak berubah.
 - Anda **bebas mengubah** warna, font, layout, dan styling di `style.css` untuk membuat tampilan yang unik dan personal.
+- Tampilan Keran menggunakan layout dua area pada desktop dan satu kolom pada layar kecil.
+- Data transaksi hanya tersimpan di browser yang sedang digunakan melalui `localStorage`.
 
 ---
 

@@ -26,11 +26,15 @@ const searchInput = document.getElementById('searchTransactionFormTitleInput');
 const balanceAmount = document.querySelector('.tracker-summary__balance-amount');
 const incomeAmount = document.querySelector('.tracker-summary__stat-amount--income');
 const expenseAmount = document.querySelector('.tracker-summary__stat-amount--expense');
+const searchStatus = document.getElementById('transactionSearchStatus');
+const incomeCount = document.querySelector('[data-count-for="income"]');
+const expenseCount = document.querySelector('[data-count-for="expense"]');
+let focusAfterUpdate = null;
 
 const cancelEditButton = document.createElement('button');
 cancelEditButton.type = 'button';
 cancelEditButton.className = 'tracker-form__cancel';
-cancelEditButton.textContent = 'Batal Edit';
+cancelEditButton.textContent = 'Batal edit';
 cancelEditButton.hidden = true;
 cancelEditButton.addEventListener('click', resetForm);
 transactionForm.append(cancelEditButton);
@@ -60,8 +64,11 @@ function isValidDateString(value) {
 }
 
 function isValidTransaction(transaction) {
+  const validId = (typeof transaction?.id === 'number'
+    ? Number.isFinite(transaction.id)
+    : typeof transaction?.id === 'string' && transaction.id.trim().length > 0);
   return transaction
-    && (typeof transaction.id === 'string' || typeof transaction.id === 'number')
+    && validId
     && typeof transaction.title === 'string'
     && transaction.title.trim().length > 0
     && typeof transaction.amount === 'number'
@@ -112,11 +119,31 @@ function persistTransactions(nextTransactions) {
   }
 }
 
-function commitTransactions(nextTransactions) {
+function commitTransactions(nextTransactions, successMessage = '') {
   if (!persistTransactions(nextTransactions)) return false;
   transactions = nextTransactions;
   document.dispatchEvent(new CustomEvent(UPDATE_EVENT));
+  if (successMessage) setActionStatus(successMessage);
   return true;
+}
+
+function setActionStatus(message) {
+  if (searchStatus) searchStatus.textContent = message;
+}
+
+function queueFocus(transactionId, testId) {
+  focusAfterUpdate = transactionId === null ? null : { transactionId: String(transactionId), testId };
+}
+
+function restoreFocusAfterUpdate() {
+  if (!focusAfterUpdate) return;
+  const { transactionId, testId } = focusAfterUpdate;
+  const card = Array.from(document.querySelectorAll('[data-testid="transactionItem"]'))
+    .find((item) => item.dataset.transactionId === transactionId);
+  const target = card?.querySelector(`[data-testid="${testId}"]`);
+  if (target) target.focus();
+  else searchInput.focus();
+  focusAfterUpdate = null;
 }
 
 function createUniqueId() {
@@ -142,6 +169,7 @@ function makeTextElement(tagName, testId, text, className = '') {
 function createTransactionCard(transaction) {
   const card = document.createElement('article');
   card.dataset.testid = 'transactionItem';
+  card.dataset.transactionId = String(transaction.id);
   card.className = `tracker-transaction-item tracker-transaction-item--${transaction.type}`;
 
   const icon = document.createElement('div');
@@ -199,6 +227,8 @@ function createTransactionCard(transaction) {
 function renderList(container, type, visibleTransactions) {
   container.replaceChildren();
   const filteredByType = visibleTransactions.filter((transaction) => transaction.type === type);
+  if (type === 'income' && incomeCount) incomeCount.textContent = String(filteredByType.length);
+  if (type === 'expense' && expenseCount) expenseCount.textContent = String(filteredByType.length);
   if (filteredByType.length === 0) {
     const empty = document.createElement('p');
     empty.className = 'tracker-empty-state';
@@ -214,6 +244,9 @@ function render() {
   const visibleTransactions = getVisibleTransactions();
   renderList(incomeList, 'income', visibleTransactions);
   renderList(expenseList, 'expense', visibleTransactions);
+  if (searchStatus) {
+    searchStatus.textContent = `Menampilkan ${visibleTransactions.length} dari ${transactions.length} transaksi`;
+  }
 }
 
 function updateDashboard() {
@@ -232,8 +265,8 @@ function resetForm() {
   editingTransactionId = null;
   transactionForm.reset();
   dateInput.value = createLocalDateValue();
-  formHeading.textContent = 'Tambah Pencatatan Baru';
-  formSubmitButton.textContent = 'Simpan';
+  formHeading.textContent = 'Tambah transaksi';
+  formSubmitButton.textContent = 'Simpan transaksi';
   cancelEditButton.hidden = true;
 }
 
@@ -245,8 +278,8 @@ function beginEdit(id) {
   amountInput.value = transaction.amount;
   dateInput.value = transaction.date;
   typeSelect.value = transaction.type;
-  formHeading.textContent = 'Edit Pencatatan';
-  formSubmitButton.textContent = 'Simpan Perubahan';
+  formHeading.textContent = 'Edit transaksi';
+  formSubmitButton.textContent = 'Simpan perubahan';
   cancelEditButton.hidden = false;
   titleInput.focus();
 }
@@ -266,7 +299,7 @@ function readFormTransaction() {
     amountInput.focus();
     return null;
   }
-  if (!date) {
+  if (!isValidDateString(date)) {
     alert('Tanggal transaksi wajib diisi.');
     dateInput.focus();
     return null;
@@ -295,14 +328,25 @@ function handleTransactionSubmit(event) {
         ? { ...transaction, ...formData }
         : transaction
     ));
-  if (commitTransactions(nextTransactions)) resetForm();
+  const wasEditing = editingTransactionId !== null;
+  const savedId = wasEditing ? editingTransactionId : nextTransactions[nextTransactions.length - 1].id;
+  queueFocus(savedId, 'transactionItemEditButton');
+  if (commitTransactions(nextTransactions, wasEditing ? 'Perubahan transaksi tersimpan.' : 'Transaksi berhasil disimpan.')) {
+    resetForm();
+  } else {
+    focusAfterUpdate = null;
+  }
 }
 
 function deleteTransaction(id) {
   if (!storageReady) return;
   const nextTransactions = transactions.filter((transaction) => String(transaction.id) !== String(id));
   if (nextTransactions.length === transactions.length) return;
-  if (commitTransactions(nextTransactions) && String(editingTransactionId) === String(id)) resetForm();
+  const wasEditing = String(editingTransactionId) === String(id);
+  if (commitTransactions(nextTransactions, 'Transaksi dihapus.')) {
+    if (wasEditing) resetForm();
+    searchInput.focus();
+  }
 }
 
 function toggleTransactionType(id) {
@@ -312,9 +356,14 @@ function toggleTransactionType(id) {
       ? { ...transaction, type: transaction.type === 'income' ? 'expense' : 'income' }
       : transaction
   ));
-  if (commitTransactions(nextTransactions) && String(editingTransactionId) === String(id)) {
-    const changed = nextTransactions.find((transaction) => String(transaction.id) === String(id));
-    typeSelect.value = changed.type;
+  queueFocus(id, 'transactionItemEditTypeButton');
+  if (commitTransactions(nextTransactions, 'Jenis transaksi diperbarui.')) {
+    if (String(editingTransactionId) === String(id)) {
+      const changed = nextTransactions.find((transaction) => String(transaction.id) === String(id));
+      typeSelect.value = changed.type;
+    }
+  } else {
+    focusAfterUpdate = null;
   }
 }
 
@@ -333,6 +382,7 @@ searchForm.addEventListener('submit', (event) => {
 document.addEventListener(UPDATE_EVENT, () => {
   render();
   updateDashboard();
+  restoreFocusAfterUpdate();
 });
 
 dateInput.value = createLocalDateValue();
