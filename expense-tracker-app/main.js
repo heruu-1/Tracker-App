@@ -46,15 +46,29 @@ function formatCurrency(value) {
   return `Rp ${new Intl.NumberFormat('id-ID').format(value)}`;
 }
 
+function isValidDateString(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const [, yearText, monthText, dayText] = match;
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const day = Number(dayText);
+  const calendarDate = new Date(Date.UTC(year, month - 1, day));
+  return calendarDate.getUTCFullYear() === year
+    && calendarDate.getUTCMonth() === month - 1
+    && calendarDate.getUTCDate() === day;
+}
+
 function isValidTransaction(transaction) {
   return transaction
     && (typeof transaction.id === 'string' || typeof transaction.id === 'number')
     && typeof transaction.title === 'string'
     && transaction.title.trim().length > 0
-    && Number.isFinite(Number(transaction.amount))
-    && Number(transaction.amount) >= 1
+    && typeof transaction.amount === 'number'
+    && Number.isFinite(transaction.amount)
+    && transaction.amount >= 1
     && typeof transaction.date === 'string'
-    && /^(\d{4})-(\d{2})-(\d{2})$/.test(transaction.date)
+    && isValidDateString(transaction.date)
     && (transaction.type === 'income' || transaction.type === 'expense');
 }
 
@@ -75,10 +89,11 @@ function loadTransactions() {
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (!stored) return [];
     const parsed = JSON.parse(stored);
-    if (!Array.isArray(parsed) || !parsed.every(isValidTransaction)) {
+    const ids = Array.isArray(parsed) ? parsed.map((transaction) => String(transaction.id)) : [];
+    if (!Array.isArray(parsed) || !parsed.every(isValidTransaction) || new Set(ids).size !== ids.length) {
       throw new Error('Format data transaksi tidak valid.');
     }
-    return parsed.map((transaction) => ({ ...transaction, amount: Number(transaction.amount) }));
+    return parsed.map((transaction) => ({ ...transaction }));
   } catch (error) {
     storageReady = false;
     showStorageMessage(`Data transaksi tidak dapat dimuat: ${error.message}`);
@@ -116,9 +131,10 @@ function getVisibleTransactions() {
   return transactions.filter((transaction) => transaction.title.toLocaleLowerCase('id-ID').includes(keyword));
 }
 
-function makeTextElement(tagName, testId, text) {
+function makeTextElement(tagName, testId, text, className = '') {
   const element = document.createElement(tagName);
   element.dataset.testid = testId;
+  element.className = className;
   element.textContent = text;
   return element;
 }
@@ -136,14 +152,19 @@ function createTransactionCard(transaction) {
   const detail = document.createElement('div');
   detail.className = 'tracker-transaction-item__detail';
   detail.append(
-    makeTextElement('h3', 'transactionItemTitle', transaction.title),
-    makeTextElement('p', 'transactionItemDate', `Tanggal: ${transaction.date}`),
-    makeTextElement('p', 'transactionItemType', `Tipe: ${transaction.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}`),
+    makeTextElement('h3', 'transactionItemTitle', transaction.title, 'tracker-transaction-item__title'),
+    makeTextElement('p', 'transactionItemDate', `Tanggal: ${transaction.date}`, 'tracker-transaction-item__date'),
+    makeTextElement('p', 'transactionItemType', `Tipe: ${transaction.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}`, 'tracker-transaction-item__type'),
   );
 
   const right = document.createElement('div');
   right.className = 'tracker-transaction-item__right';
-  right.append(makeTextElement('p', 'transactionItemAmount', `${transaction.type === 'income' ? '+' : '-'} ${formatCurrency(transaction.amount)}`));
+  right.append(makeTextElement(
+    'p',
+    'transactionItemAmount',
+    `${transaction.type === 'income' ? '+' : '-'} ${formatCurrency(transaction.amount)}`,
+    `tracker-transaction-item__amount tracker-transaction-item__amount--${transaction.type}`,
+  ));
 
   const actions = document.createElement('div');
   actions.className = 'tracker-transaction-item__actions';

@@ -13,9 +13,9 @@
   --accent-blue: #2E6B4D;
   --accent-light: #E8F2EC;
 
-  --color-income: #10B981;
+  --color-income: #137A4A;
   --bg-income: #ECFDF5;
-  --color-expense: #F43F5E;
+  --color-expense: #B4233D;
   --bg-expense: #FFF1F2;
 
   --border-light: #DCE5DF;
@@ -372,9 +372,8 @@ select:focus-visible {
 .tracker-transaction-item__title {
   font-weight: 600;
   font-size: 1.05rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .tracker-transaction-item__date {
